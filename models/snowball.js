@@ -5,11 +5,18 @@ const snowBallSchema = mongoose.Schema({
         type: String,
         required: true
     },
+    numberOfSteps: {
+        type: Number,
+        default: 100
+    },
     currentStep: {
         type: Number,
         default: 0
     },
-    creator: {
+    owner: {
+        type: String
+    },
+    participants: {
         type: Array
     }
 })
