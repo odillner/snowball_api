@@ -1,11 +1,12 @@
 const Snowball = require('../models/snowball.js')
+const User = require('../models/user.js')
 
 module.exports = {
     list: async (req, res, next) => {
         try {
             const snowballs = await Snowball.find({})
 
-            res.json(snowballs).end()
+            res.json(snowballs)
         } catch (err) {
             next(err)
         }
@@ -13,11 +14,22 @@ module.exports = {
 
     create: async (req, res, next) => {
         try {
-            const snowball = new Snowball(req.body)
+            const body = req.body
 
-            const result = await snowball.save()
+            const user = await User.findById(body.owner)
 
-            res.status(201).json(result).end()
+            const snowball = new Snowball({
+                name: body.name,
+                owner: body.owner,
+                date: new Date(),
+            })
+
+            const newSnowball = await snowball.save()
+
+            user.snowballs = user.snowballs.concat(newSnowball.id)
+            await user.save()
+
+            res.status(201).json(newSnowball)
         } catch (err) {
             next(err)
         }
@@ -33,7 +45,7 @@ module.exports = {
                 throw err
             }
 
-            res.json(snowball).end()
+            res.json(snowball)
         } catch (err) {
             next(err)
         }

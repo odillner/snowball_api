@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const uniqueValidator = require('mongoose-unique-validator')
 
 const snowBallSchema = mongoose.Schema({
     name: {
@@ -14,11 +15,16 @@ const snowBallSchema = mongoose.Schema({
         default: 0
     },
     owner: {
-        type: String
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Owner',
+        required: true
     },
-    participants: {
-        type: Array
-    }
+    participants: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Participants'
+        }
+    ],
 })
 
 snowBallSchema.set('toJSON', {
@@ -29,6 +35,8 @@ snowBallSchema.set('toJSON', {
         delete returnedObject.__v
     }
 })
+
+snowBallSchema.plugin(uniqueValidator)
 
 module.exports = mongoose.model('Snowball', snowBallSchema)
 

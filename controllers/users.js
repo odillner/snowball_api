@@ -1,11 +1,12 @@
 const User = require('../models/user.js')
+const bcrypt = require('bcrypt')
 
 module.exports = {
     list: async (req, res, next) => {
         try {
             const users = await User.find({})
 
-            res.json(users).end()
+            res.json(users)
         } catch (err) {
             next(err)
         }
@@ -13,11 +14,27 @@ module.exports = {
 
     create: async (req, res, next) => {
         try {
-            const user = new User(req.body)
+            const body = req.body
+
+            if (body.password.length < 8) {
+                let err = new Error('Too short password')
+                err.name = 'ValidationError'
+                throw err
+            }
+
+            const saltRounds = 10
+            const passwordHash = await bcrypt.hash(body.password, saltRounds)
+
+            const user = new User({
+                username: body.username,
+                name: body.name,
+                email: body.email,
+                passwordHash,
+            })
 
             const result = await user.save()
 
-            res.status(201).json(result).end()
+            res.status(201).json(result)
         } catch (err) {
             next(err)
         }
@@ -33,7 +50,7 @@ module.exports = {
                 throw err
             }
 
-            res.json(user).end()
+            res.json(user)
         } catch (err) {
             next(err)
         }
@@ -49,7 +66,7 @@ module.exports = {
                 throw err
             }
 
-            res.json(user).end()
+            res.json(user)
         } catch (err) {
             next(err)
         }
