@@ -6,6 +6,9 @@
   "scripts": {
     "start": "cross-env NODE_ENV=production node index.js",
     "dev": "cross-env NODE_ENV=development nodemon index.js",
+    "build:ui": "rmdir build /s /q && cd ../snowball_frontend/ && npm run build && xcopy build ..\\snowball_api\\build\\ /s /e /y /i",
+    "deploy": "git push heroku master",
+    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && npm run deploy",
     "lint": "eslint .",
     "lintfix": "eslint . --fix",
     "test": "cross-env NODE_ENV=test jest --verbose --runInBand"
