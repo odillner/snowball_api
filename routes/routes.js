@@ -1,5 +1,6 @@
 const snowballs = require('../controllers/snowballs')
 const users = require('../controllers/users')
+const login = require('../controllers/login')
 
 module.exports = (app) => {
     app.route('/api/snowballs')
@@ -19,5 +20,8 @@ module.exports = (app) => {
         .get(users.read)
         .put(users.update)
         .delete(users.remove)
+
+    app.route('/api/login/')
+        .post(login.auth)
 
 }

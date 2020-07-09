@@ -1,10 +1,13 @@
 const User = require('../models/user.js')
+const Snowball = require('../models/snowball.js')
+
 const bcrypt = require('bcrypt')
 
 module.exports = {
     list: async (req, res, next) => {
         try {
-            const users = await User.find({})
+            const users = await User
+                .find({}).populate('own_snowballs')
 
             res.json(users)
         } catch (err) {
@@ -15,6 +18,12 @@ module.exports = {
     create: async (req, res, next) => {
         try {
             const body = req.body
+
+            if (!body.password) {
+                let err = new Error('No password field')
+                err.name = 'ValidationError'
+                throw err
+            }
 
             if (body.password.length < 8) {
                 let err = new Error('Too short password')
@@ -42,7 +51,11 @@ module.exports = {
 
     read: async (req, res, next) => {
         try {
-            const user = await User.findById(req.params.id)
+            const id = req.params.id
+
+            const user = await User
+                .findById(id)
+                .populate('snowballs')
 
             if (!user) {
                 let err = new Error('Resource not found')
@@ -58,7 +71,11 @@ module.exports = {
 
     update: async (req, res, next) => {
         try {
-            const user = await User.findOneAndUpdate({_id: req.params.id}, req.body, {new: true, useFindAndModify: false, runValidators: true})
+            const id = req.params.id
+            const body = req.body
+
+            const user = await User
+                .findOneAndUpdate({_id: id}, body, {new: true, useFindAndModify: false, runValidators: true})
 
             if (!user) {
                 let err = new Error('Resource not found')
@@ -74,7 +91,10 @@ module.exports = {
 
     remove: async (req, res, next) => {
         try {
-            const player = await User.findById(req.params.id)
+            const id = req.params.id
+
+            const player = await User
+                .findById(id)
 
             if (!player) {
                 let err = new Error('Resource not found')
@@ -82,7 +102,10 @@ module.exports = {
                 throw err
             }
 
-            await User.deleteOne({'_id':req.params.id})
+            await User
+                .deleteOne({'_id':id})
+            await Snowball
+                .deleteMany({'owner':id})
 
             res.status(200).end()
         } catch (err) {

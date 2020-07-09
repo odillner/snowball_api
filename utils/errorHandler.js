@@ -11,6 +11,8 @@ module.exports = (err, req, res, next) => {
         return res.status(400).json({error: err.message})
     } else if (err.name === 'NotFoundError') {
         return res.status(404).json({error: err.message})
+    } else if (err.name === 'AuthorizationError') {
+        return res.status(401).json({error: err.message})
     }
 
     next(err)

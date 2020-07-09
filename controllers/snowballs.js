@@ -26,7 +26,7 @@ module.exports = {
 
             const newSnowball = await snowball.save()
 
-            user.snowballs = user.snowballs.concat(newSnowball.id)
+            user.own_snowballs = user.own_snowballs.concat(newSnowball.id)
             await user.save()
 
             res.status(201).json(newSnowball)
@@ -53,7 +53,8 @@ module.exports = {
 
     update: async (req, res, next) => {
         try {
-            const snowball = await Snowball.findOneAndUpdate({_id: req.params.id}, req.body, {new: true, useFindAndModify: false, runValidators: true})
+            const body = req.body
+            const snowball = await Snowball.findOneAndUpdate({_id: req.params.id}, body, {new: true, useFindAndModify: false, runValidators: true})
 
             if (!snowball) {
                 let err = new Error('Resource not found')

@@ -20,7 +20,13 @@ const userSchema = mongoose.Schema({
     passwordHash: {
         type: String,
     },
-    snowballs: [
+    own_snowballs: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Snowball'
+        }
+    ],
+    part_snowballs: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Snowball'
@@ -29,7 +35,7 @@ const userSchema = mongoose.Schema({
     snowball_history: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Snowball History'
+            ref: 'Snowball'
         }
     ],
     friends: [
