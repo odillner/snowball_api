@@ -15,7 +15,6 @@ const userSchema = mongoose.Schema({
     email: {
         type: String,
         required: true,
-        unique: true
     },
     passwordHash: {
         type: String,
@@ -41,7 +40,7 @@ const userSchema = mongoose.Schema({
     friends: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Friends'
+            ref: 'User'
         }
     ],
 })

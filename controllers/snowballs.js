@@ -2,7 +2,7 @@ const Snowball = require('../models/snowball.js')
 const User = require('../models/user.js')
 
 module.exports = {
-    list: async (req, res, next) => {
+    getAll: async (req, res, next) => {
         try {
             const snowballs = await Snowball.find({})
 
@@ -35,7 +35,7 @@ module.exports = {
         }
     },
 
-    read: async (req, res, next) => {
+    getById: async (req, res, next) => {
         try {
             const snowball = await Snowball.findById(req.params.id)
 

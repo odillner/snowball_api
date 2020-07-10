@@ -2,12 +2,14 @@ const User = require('../models/user.js')
 const Snowball = require('../models/snowball.js')
 
 const bcrypt = require('bcrypt')
+const logger = require('../utils/logger.js')
 
 module.exports = {
-    list: async (req, res, next) => {
+    getAll: async (req, res, next) => {
         try {
             const users = await User
-                .find({}).populate('own_snowballs')
+                .find({})
+                .populate('own_snowballs')
 
             res.json(users)
         } catch (err) {
@@ -49,13 +51,33 @@ module.exports = {
         }
     },
 
-    read: async (req, res, next) => {
+    getById: async (req, res, next) => {
         try {
             const id = req.params.id
 
             const user = await User
                 .findById(id)
-                .populate('snowballs')
+                .populate('own_snowballs')
+
+            if (!user) {
+                let err = new Error('Resource not found')
+                err.name = 'NotFoundError'
+                throw err
+            }
+
+            res.json(user)
+        } catch (err) {
+            next(err)
+        }
+    },
+
+    getByName: async (req, res, next) => {
+        try {
+            const name = req.params.name
+
+            const user = await User
+                .findOne({username:name})
+                .populate('own_snowballs')
 
             if (!user) {
                 let err = new Error('Resource not found')
@@ -108,6 +130,72 @@ module.exports = {
                 .deleteMany({'owner':id})
 
             res.status(200).end()
+        } catch (err) {
+            next(err)
+        }
+    },
+
+    getAllFriends: async (req, res, next) => {
+        try {
+            const id = req.params.id
+
+            const user = await User
+                .findById(id)
+
+            if (!user) {
+                let err = new Error('Resource not found')
+                err.name = 'NotFoundError'
+                throw err
+            }
+
+
+            const allFriends = async() => {
+                
+            }
+            const friends = await Promise.all(user.friends.map(async (friend) => {
+                return await User
+                    .findById(friend.id)
+                    .populate('own_snowballs')
+            }))
+
+            logger.info('friends:', friends)
+
+            res.json(friends)
+        } catch (err) {
+            next(err)
+        }
+    },
+
+    addFriend: async (req, res, next) => {
+        try {
+            console.log("asdasdsadadsa")
+            const id = req.params.id
+            const newFriend = req.body.id
+
+            const user = await User
+                .findById(id)
+
+            if (!user) {
+                let err = new Error('Resource not found')
+                err.name = 'NotFoundError'
+                throw err
+            }
+
+            console.log('user:' , {user})
+
+            const newFriends = user.friends.concat(newFriend)
+
+            console.log('newFriends:' , {newFriends})
+
+            let newUser = user
+            newUser.friends = newFriends
+
+            console.log('newUser:' , {newUser})
+
+            const result = await User
+                .findOneAndUpdate({_id: id}, newUser, {new: true, useFindAndModify: false})
+
+            res.json(result)
         } catch (err) {
             next(err)
         }
