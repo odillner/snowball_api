@@ -148,19 +148,20 @@ module.exports = {
                 throw err
             }
 
+            const friends = user.friends
 
-            const allFriends = async() => {
-                
-            }
-            const friends = await Promise.all(user.friends.map(async (friend) => {
-                return await User
-                    .findById(friend.id)
+            let result = []
+
+            for (const friend of friends) {
+                const newFriend = await User
+                    .findById(friend)
                     .populate('own_snowballs')
-            }))
 
-            logger.info('friends:', friends)
+                console.log(newFriend, friend)
+                result = result.concat(newFriend)
+            }
 
-            res.json(friends)
+            res.json(result)
         } catch (err) {
             next(err)
         }
@@ -168,7 +169,6 @@ module.exports = {
 
     addFriend: async (req, res, next) => {
         try {
-            console.log("asdasdsadadsa")
             const id = req.params.id
             const newFriend = req.body.id
 
@@ -181,16 +181,10 @@ module.exports = {
                 throw err
             }
 
-            console.log('user:' , {user})
-
             const newFriends = user.friends.concat(newFriend)
-
-            console.log('newFriends:' , {newFriends})
 
             let newUser = user
             newUser.friends = newFriends
-
-            console.log('newUser:' , {newUser})
 
             const result = await User
                 .findOneAndUpdate({_id: id}, newUser, {new: true, useFindAndModify: false})
