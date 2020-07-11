@@ -8,6 +8,10 @@ module.exports = {
         try {
             const users = await User
                 .find({})
+                .populate('ownSnowballs')
+                .populate('prevSnowballs')
+                .populate('histSnowballs')
+                .populate('friends')
 
             res.json(users)
         } catch (err) {
@@ -55,6 +59,10 @@ module.exports = {
 
             const user = await User
                 .findById(id)
+                .populate('ownSnowballs')
+                .populate('prevSnowballs')
+                .populate('histSnowballs')
+                .populate('friends')
 
             if (!user) {
                 let err = new Error('Resource not found')
@@ -74,6 +82,10 @@ module.exports = {
 
             const user = await User
                 .findOne({username:name})
+                .populate('ownSnowballs')
+                .populate('prevSnowballs')
+                .populate('histSnowballs')
+                .populate('friends')
 
             if (!user) {
                 let err = new Error('Resource not found')
@@ -122,8 +134,6 @@ module.exports = {
 
             await User
                 .deleteOne({'_id':id})
-            await Snowball
-                .deleteMany({'owner':id})
 
             res.status(200).end()
         } catch (err) {
@@ -212,29 +222,6 @@ module.exports = {
                 .findOneAndUpdate({_id: id}, newUser, {new: true, useFindAndModify: false})
 
             res.json(result)
-        } catch (err) {
-            next(err)
-        }
-    },
-
-    getSnowballPopulatedUser: async (req, res, next) => {
-        try {
-            const id = req.params.id
-
-            const user = await User
-                .findOne({_id:id})
-                .populate('ownSnowballs')
-                .populate('partSnowballs')
-                .populate('histSnowballs')
-
-
-            if (!user) {
-                let err = new Error('Resource not found')
-                err.name = 'NotFoundError'
-                throw err
-            }
-
-            res.json(user)
         } catch (err) {
             next(err)
         }

@@ -29,9 +29,6 @@ module.exports = (app) => {
         .post(users.addFriend)
         .delete(users.removeFriend)
 
-    app.route('/api/users/snowballs/:id')
-        .get(users.getSnowballPopulatedUser)
-
     app.route('/api/login/')
         .post(login.auth)
 
