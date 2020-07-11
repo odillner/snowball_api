@@ -39,7 +39,7 @@ module.exports = {
                 username: body.username,
                 name: body.name,
                 email: body.email,
-                passwordHash,
+                passwordHash: passwordHash
             })
 
             const result = await user.save()

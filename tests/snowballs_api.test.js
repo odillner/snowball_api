@@ -12,8 +12,9 @@ beforeAll(async () => {
     await User.deleteMany({})
 
     for (const user of initialUsers) {
-        const newUser = new User(user)
-        await newUser.save()
+        await api
+            .post('/api/users')
+            .send(user)
     }
 })
 

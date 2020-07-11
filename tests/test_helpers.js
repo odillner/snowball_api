@@ -43,19 +43,13 @@ module.exports = {
         owner: '5a422a851b54a676234d17f7'
     },
 
-    singleSnowballWithId : {
-        name: 'snowballabc',
-        owner: '5a422a851b54a676234d17f7',
-        _id: '5f074d80fe7d9108d0ea712a'
-    },
-
     initialSnowballs : [{
         name: 'snowball1',
-        owner: '5a422a851b54a676234d17f7'
+        owner: '5a422a851b54a676234d17f7',
     },
     {
         name: 'snowball2',
-        owner: '5a422aa71b54a676234d17f8'
+        owner: '5a422aa71b54a676234d17f8',
     },
     {
         name: 'snowball3',

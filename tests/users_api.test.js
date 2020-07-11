@@ -4,7 +4,6 @@ const app = require('../app')
 const api = supertest(app)
 
 const User = require('../models/user')
-const Snowball = require('../models/snowball')
 
 const {singleUser, initialUsers} = require('./test_helpers')
 
