@@ -193,10 +193,10 @@ module.exports = {
         }
     },
 
-    deleteFriend: async (req, res, next) => {
+    removeFriend: async (req, res, next) => {
         try {
             const id = req.params.id
-            const oldFriend = req.body.id
+            const oldFriend = req.body
 
             const user = await User
                 .findById(id)
@@ -207,7 +207,7 @@ module.exports = {
                 throw err
             }
 
-            const newFriends = user.friends.filter(friend => friend !== oldFriend)
+            const newFriends = await user.friends.filter(friend => friend != oldFriend.id)
 
             let newUser = user
             newUser.friends = newFriends
