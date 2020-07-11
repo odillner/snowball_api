@@ -2,7 +2,6 @@ const User = require('../models/user.js')
 const Snowball = require('../models/snowball.js')
 
 const bcrypt = require('bcrypt')
-const logger = require('../utils/logger.js')
 
 module.exports = {
     getAll: async (req, res, next) => {
@@ -157,7 +156,6 @@ module.exports = {
                     .findById(friend)
                     .populate('own_snowballs')
 
-                console.log(newFriend, friend)
                 result = result.concat(newFriend)
             }
 
@@ -182,6 +180,34 @@ module.exports = {
             }
 
             const newFriends = user.friends.concat(newFriend)
+
+            let newUser = user
+            newUser.friends = newFriends
+
+            const result = await User
+                .findOneAndUpdate({_id: id}, newUser, {new: true, useFindAndModify: false})
+
+            res.json(result)
+        } catch (err) {
+            next(err)
+        }
+    },
+
+    deleteFriend: async (req, res, next) => {
+        try {
+            const id = req.params.id
+            const oldFriend = req.body.id
+
+            const user = await User
+                .findById(id)
+
+            if (!user) {
+                let err = new Error('Resource not found')
+                err.name = 'NotFoundError'
+                throw err
+            }
+
+            const newFriends = user.friends.filter(friend => friend !== oldFriend)
 
             let newUser = user
             newUser.friends = newFriends

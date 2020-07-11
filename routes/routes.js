@@ -27,6 +27,7 @@ module.exports = (app) => {
     app.route('/api/users/friends/:id')
         .get(users.getAllFriends)
         .post(users.addFriend)
+        .delete(users.deleteFriend)
 
     app.route('/api/login/')
         .post(login.auth)
