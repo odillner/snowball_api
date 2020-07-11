@@ -11,7 +11,7 @@ const {initialUsers, singleSnowball, initialSnowballs} = require('./test_helpers
 beforeAll(async () => {
     await User.deleteMany({})
 
-    for (const user of initialUsers) {
+    for (let user of initialUsers) {
         await api
             .post('/api/users')
             .send(user)
@@ -21,7 +21,7 @@ beforeAll(async () => {
 beforeEach(async () => {
     await Snowball.deleteMany({})
 
-    for (const snowball of initialSnowballs) {
+    for (let snowball of initialSnowballs) {
         await api
             .post('/api/snowballs')
             .send(snowball)

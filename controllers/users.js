@@ -8,7 +8,6 @@ module.exports = {
         try {
             const users = await User
                 .find({})
-                .populate('own_snowballs')
 
             res.json(users)
         } catch (err) {
@@ -56,7 +55,6 @@ module.exports = {
 
             const user = await User
                 .findById(id)
-                .populate('own_snowballs')
 
             if (!user) {
                 let err = new Error('Resource not found')
@@ -76,7 +74,6 @@ module.exports = {
 
             const user = await User
                 .findOne({username:name})
-                .populate('own_snowballs')
 
             if (!user) {
                 let err = new Error('Resource not found')
@@ -154,7 +151,6 @@ module.exports = {
             for (const friend of friends) {
                 const newFriend = await User
                     .findById(friend)
-                    .populate('own_snowballs')
 
                 result = result.concat(newFriend)
             }
@@ -220,4 +216,28 @@ module.exports = {
             next(err)
         }
     },
+
+    getSnowballPopulatedUser: async (req, res, next) => {
+        try {
+            const id = req.params.id
+
+            const user = await User
+                .findOne({_id:id})
+                .populate('ownSnowballs')
+                .populate('partSnowballs')
+                .populate('histSnowballs')
+
+
+            if (!user) {
+                let err = new Error('Resource not found')
+                err.name = 'NotFoundError'
+                throw err
+            }
+
+            res.json(user)
+        } catch (err) {
+            next(err)
+        }
+    },
+
 }

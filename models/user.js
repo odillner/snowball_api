@@ -19,19 +19,19 @@ const userSchema = mongoose.Schema({
     passwordHash: {
         type: String,
     },
-    own_snowballs: [
+    ownSnowballs: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Snowball'
         }
     ],
-    part_snowballs: [
+    partSnowballs: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Snowball'
         }
     ],
-    snowball_history: [
+    histSnowballs: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Snowball'

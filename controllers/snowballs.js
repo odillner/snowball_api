@@ -26,7 +26,7 @@ module.exports = {
 
             const newSnowball = await snowball.save()
 
-            user.own_snowballs = user.own_snowballs.concat(newSnowball.id)
+            user.ownSnowballs = user.ownSnowballs.concat(newSnowball.id)
             await user.save()
 
             res.status(201).json(newSnowball)
