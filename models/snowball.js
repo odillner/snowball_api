@@ -16,13 +16,35 @@ const snowBallSchema = mongoose.Schema({
     },
     owner: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Owner',
+        ref: 'User',
         required: true
+    },
+    finished: {
+        type: Boolean,
+        default: false
+    },
+    failed: {
+        type: Boolean,
+        default: false
+    },
+    oddsTarget: {
+        type: Number,
+        default: 1
+    },
+    currentStake: {
+        type: Number,
+        default: 1
     },
     participants: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Participants'
+            ref: 'User'
+        }
+    ],
+    steps: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Play'
         }
     ],
 })
@@ -31,7 +53,6 @@ snowBallSchema.set('toJSON', {
     transform: (document, returnedObject) => {
         returnedObject.id = returnedObject._id.toString()
         delete returnedObject._id
-        delete returnedObject.date
         delete returnedObject.__v
     }
 })

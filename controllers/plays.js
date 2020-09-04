@@ -1,12 +1,12 @@
+const Play = require('../models/play.js')
 const Snowball = require('../models/snowball.js')
-const User = require('../models/user.js')
 
 module.exports = {
     getAll: async (req, res, next) => {
         try {
-            const snowballs = await Snowball.find({})
+            const plays = await Play.find({})
 
-            res.json(snowballs)
+            res.json(plays)
         } catch (err) {
             next(err)
         }
@@ -15,20 +15,18 @@ module.exports = {
     create: async (req, res, next) => {
         try {
             const body = req.body
+            const id = req.params.id
 
-            const user = await User.findById(body.owner)
+            const snowball = await Snowball.findById(id)
 
-            const snowball = new Snowball({
-                name: body.name,
-                owner: body.owner
-            })
+            const play = new Play({...body, snowball: id})
 
-            const newSnowball = await snowball.save()
+            const newPlay = await play.save()
 
-            user.ownSnowballs = user.ownSnowballs.concat(newSnowball.id)
-            await user.save()
+            snowball.plays = snowball.concat(newPlay.id)
+            await snowball.save()
 
-            res.status(201).json(newSnowball)
+            res.status(201).json(newPlay)
         } catch (err) {
             next(err)
         }
@@ -36,15 +34,15 @@ module.exports = {
 
     getById: async (req, res, next) => {
         try {
-            const snowball = await Snowball.findById(req.params.id)
+            const play = await Play.findById(req.params.id)
 
-            if (!snowball) {
+            if (!play) {
                 let err = new Error('Resource not found')
                 err.name = 'NotFoundError'
                 throw err
             }
 
-            res.json(snowball)
+            res.json(play)
         } catch (err) {
             next(err)
         }
@@ -53,15 +51,15 @@ module.exports = {
     update: async (req, res, next) => {
         try {
             const body = req.body
-            const snowball = await Snowball.findOneAndUpdate({_id: req.params.id}, body, {new: true, useFindAndModify: false, runValidators: true})
+            const play = await Play.findOneAndUpdate({_id: req.params.id}, body, {new: true, useFindAndModify: false, runValidators: true})
 
-            if (!snowball) {
+            if (!play) {
                 let err = new Error('Resource not found')
                 err.name = 'NotFoundError'
                 throw err
             }
 
-            res.json(snowball).end()
+            res.json(play).end()
         } catch (err) {
             next(err)
         }
@@ -69,15 +67,15 @@ module.exports = {
 
     remove: async (req, res, next) => {
         try {
-            const snowball = await Snowball.findById(req.params.id)
+            const play = await Play.findById(req.params.id)
 
-            if (!snowball) {
+            if (!play) {
                 let err = new Error('Resource not found')
                 err.name = 'NotFoundError'
                 throw err
             }
 
-            await Snowball.deleteOne({'_id':req.params.id})
+            await Play.deleteOne({'_id':req.params.id})
 
             res.status(200).end()
         } catch (err) {
