@@ -18,7 +18,7 @@ module.exports = (app) => {
         .get(plays.getAll)
         .post(plays.create)
 
-    app.route('/api/plays/:id')
+    app.route('/api/snowballs/:id/plays/:playid')
         .get(plays.getById)
         .post(plays.remove)
 
@@ -37,6 +37,8 @@ module.exports = (app) => {
     app.route('/api/users/:id/friends/')
         .get(friends.getAll)
         .post(friends.create)
+
+    app.route('/api/users/:id/friends/:friendId')
         .delete(friends.remove)
 
     app.route('/api/login/')

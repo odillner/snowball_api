@@ -7,6 +7,7 @@ module.exports = {
 
             const user = await User
                 .findById(id)
+                .populate('friends')
 
             if (!user) {
                 let err = new Error('Resource not found')
@@ -14,18 +15,7 @@ module.exports = {
                 throw err
             }
 
-            const friends = user.friends
-
-            let result = []
-
-            for (const friend of friends) {
-                const newFriend = await User
-                    .findById(friend)
-
-                result = result.concat(newFriend)
-            }
-
-            res.json(result)
+            res.json(user.friends)
         } catch (err) {
             next(err)
         }
@@ -34,7 +24,7 @@ module.exports = {
     create: async (req, res, next) => {
         try {
             const id = req.params.id
-            const newFriend = req.body.id
+            const newFriend = req.params.id
 
             const user = await User
                 .findById(id)
@@ -45,15 +35,11 @@ module.exports = {
                 throw err
             }
 
-            const newFriends = user.friends.concat(newFriend)
+            user.friends = user.friends.concat(newFriend)
 
-            let newUser = user
-            newUser.friends = newFriends
+            const newUser = await User.save()
 
-            const result = await User
-                .findOneAndUpdate({_id: id}, newUser, {new: true, useFindAndModify: false})
-
-            res.json(result)
+            res.json(newUser)
         } catch (err) {
             next(err)
         }
@@ -62,7 +48,7 @@ module.exports = {
     remove: async (req, res, next) => {
         try {
             const id = req.params.id
-            const oldFriend = req.body
+            const friendId = req.params.friendId
 
             const user = await User
                 .findById(id)
@@ -73,15 +59,11 @@ module.exports = {
                 throw err
             }
 
-            const newFriends = await user.friends.filter(friend => friend != oldFriend.id)
+            user.friends = await user.friends.filter(friend => friend != friendId.id)
 
-            let newUser = user
-            newUser.friends = newFriends
+            const newUser = await User.save()
 
-            const result = await User
-                .findOneAndUpdate({_id: id}, newUser, {new: true, useFindAndModify: false})
-
-            res.json(result)
+            res.json(newUser)
         } catch (err) {
             next(err)
         }

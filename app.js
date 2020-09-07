@@ -8,8 +8,9 @@ const routes = require('./routes/routes')
 const config = require('./utils/config')
 const logger = require('./utils/logger')
 
-const unknownEndpoint = require('./utils/unknownEndpoint')
-const errorHandler = require('./utils/errorHandler')
+const unknownEndpoint = require('./middleware/unknownEndpoint')
+const errorHandler = require('./middleware/errorHandler')
+const tokenAuth = require('./middleware/tokenAuth')
 
 logger.info('connecting to', config.DB_URL)
 
@@ -21,9 +22,10 @@ mongoose
 app.use(express.static('build'))
 app.use(cors())
 app.use(express.json())
+app.use(tokenAuth)
 
 
-if (process.env.NODE_ENV !== 'test') {
+if (process.env.NODE_ENV !== 'test' || 'production') {
     morgan.token('body', function (req) { return JSON.stringify(req.body) })
     app.use(morgan(':method :url :status :response-time ms - :res[content-length] byte :body - :req[content-length] byte'))
 }
